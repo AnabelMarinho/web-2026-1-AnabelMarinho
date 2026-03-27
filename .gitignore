@@ -1,0 +1,15 @@
+# FRONTEND (Node)
+frontend/node_modules
+frontend/dist
+
+# BACKEND (Java)
+backend/target
+backend/.mvn
+
+# IDEs
+.vscode
+.idea
+
+# Sistema
+.DS_Store
+Thumbs.db
