@@ -1,14 +1,16 @@
 import { Routes } from '@angular/router';
-import { StudentPage } from './pages/student-page/student-page';
-import { TeacherPage } from './pages/teacher-page/teacher-page';
-import { CourseAdminPage } from './pages/course-admin-page/course-admin-page';
-import { TechPage } from './pages/tech-page/tech-page';
+import { HomePage } from './pages/home-page/home-page';
+import { SalasGerenciaPage } from './pages/salas-gerencia-page/salas-gerencia-page';
+import { CursoPage } from './pages/curso-page/curso-page';
+import { TurmaPage } from './pages/turma-page/turma-page';
+import { CertificadosPage } from './pages/certificados-page/certificados-page';
+import { PerfilUsuarioPage } from './pages/perfil-usuario-page/perfil-usuario-page';
 
 export const routes: Routes = [
-  { path: '', redirectTo: 'teacher', pathMatch: 'full' }, // escolha qual usuário simular
-  { path: 'student', component: StudentPage },
-  { path: 'teacher', component: TeacherPage },
-  { path: 'course-admin', component: CourseAdminPage },
-  { path: 'tech', component: TechPage },
-  { path: '**', redirectTo: 'student' }
+  { path: '', component: HomePage }, 
+  {path: 'salasgerencia', component: SalasGerenciaPage},
+  {path: 'curso', component: CursoPage},
+  { path: 'turma', component: TurmaPage }, 
+  { path: 'certificados', component: CertificadosPage }, 
+  { path: 'perfil', component: PerfilUsuarioPage }, 
 ];
