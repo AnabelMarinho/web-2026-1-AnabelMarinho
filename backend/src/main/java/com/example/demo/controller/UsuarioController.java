@@ -1,10 +1,8 @@
 package com.example.demo.controller;
 
-import com.example.demo.model.Usuario;
-import com.example.demo.repository.UsuarioRepository;
-import org.springframework.http.HttpStatus;
+import com.example.demo.dto.UsuarioDTO;
+import com.example.demo.service.UsuarioService;
 import org.springframework.web.bind.annotation.*;
-import org.springframework.web.server.ResponseStatusException;
 
 import java.util.List;
 
@@ -12,47 +10,39 @@ import java.util.List;
 @RequestMapping("/usuarios")
 public class UsuarioController {
 
-    private final UsuarioRepository usuarioRepository;
+    private final UsuarioService usuarioService;
 
-    public UsuarioController(UsuarioRepository usuarioRepository) {
-        this.usuarioRepository = usuarioRepository;
+    public UsuarioController(UsuarioService usuarioService) {
+        this.usuarioService = usuarioService;
     }
 
-    // Listar todos
+    // Listar todos usuários
     @GetMapping
-    public List<Usuario> listar() {
-        return usuarioRepository.findAll();
+    public List<UsuarioDTO> listar() {
+        return usuarioService.listarDTO();
     }
 
+    // Buscar usuário por ID
     @GetMapping("/{id}")
-    public Usuario buscarPorId(@PathVariable Long id) {
-        return usuarioRepository.findById(id)
-                .orElseThrow(() -> new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado"));
+    public UsuarioDTO buscarPorId(@PathVariable Long id) {
+        return usuarioService.buscarPorIdDTO(id);
     }
 
     // Criar usuário
     @PostMapping
-    public Usuario salvar(@RequestBody Usuario usuario) {
-        return usuarioRepository.save(usuario);
+    public UsuarioDTO salvar(@RequestBody UsuarioDTO dto) {
+        return usuarioService.salvarDTO(dto);
     }
 
     // Atualizar usuário
     @PutMapping("/{id}")
-    public Usuario atualizar(@PathVariable Long id, @RequestBody Usuario usuarioAtualizado) {
-        Usuario usuario = usuarioRepository.findById(id)
-                .orElseThrow(() -> new RuntimeException("Usuário não encontrado"));
-
-        usuario.setNomeUsuario(usuarioAtualizado.getNomeUsuario());
-        usuario.setCurso(usuarioAtualizado.getCurso());
-        usuario.setMatricula(usuarioAtualizado.getMatricula());
-        usuario.setTipo(usuarioAtualizado.getTipo());
-
-        return usuarioRepository.save(usuario);
+    public UsuarioDTO atualizar(@PathVariable Long id, @RequestBody UsuarioDTO dto) {
+        return usuarioService.atualizarDTO(id, dto);
     }
 
     // Deletar usuário
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id) {
-        usuarioRepository.deleteById(id);
+        usuarioService.deletar(id);
     }
 }

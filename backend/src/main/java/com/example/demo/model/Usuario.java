@@ -3,7 +3,6 @@ package com.example.demo.model;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
-import org.hibernate.annotations.UuidGenerator;
 
 @Getter
 @Setter
@@ -17,8 +16,9 @@ public class Usuario {
     @Column(nullable = false, length = 100)
     private String nomeUsuario;
 
-    @Column(length = 100)
-    private String curso;
+    @ManyToOne(fetch = FetchType.LAZY)
+    @JoinColumn(name = "curso_id")
+    private Curso curso;
 
     @Column(nullable = false, unique = true, length = 20)
     private String matricula;
