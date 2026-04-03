@@ -15,7 +15,7 @@ public class Usuario {
     private Long id;
 
     @Column(nullable = false, length = 100)
-    private String nome;
+    private String nomeUsuario;
 
     @Column(length = 100)
     private String curso;
