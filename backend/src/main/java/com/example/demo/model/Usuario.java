@@ -16,7 +16,7 @@ public class Usuario {
     @Column(nullable = false, length = 100)
     private String nomeUsuario;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = FetchType.LAZY, optional = true)
     @JoinColumn(name = "curso_id")
     private Curso curso;
 
@@ -25,4 +25,11 @@ public class Usuario {
 
     @Enumerated(EnumType.STRING)
     private TipoUsuario tipo;
+
+    @Column(nullable = false)
+    private String senha;
+
+    @Column(nullable = false, unique = true, length = 100)
+    private String email;
+
 }
