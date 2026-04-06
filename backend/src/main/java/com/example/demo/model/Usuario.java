@@ -4,6 +4,8 @@ import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
 
+import java.util.List;
+
 @Getter
 @Setter
 @Entity
@@ -16,9 +18,13 @@ public class Usuario {
     @Column(nullable = false, length = 100)
     private String nomeUsuario;
 
-    @ManyToOne(fetch = FetchType.LAZY, optional = true)
-    @JoinColumn(name = "curso_id")
-    private Curso curso;
+    @ManyToMany
+    @JoinTable(
+            name = "usuario_curso",
+            joinColumns = @JoinColumn(name = "usuario_id"),
+            inverseJoinColumns = @JoinColumn(name = "curso_id")
+    )
+    private List<Curso> cursos;
 
     @Column(nullable = false, unique = true, length = 20)
     private String matricula;
@@ -31,5 +37,4 @@ public class Usuario {
 
     @Column(nullable = false, unique = true, length = 100)
     private String email;
-
 }

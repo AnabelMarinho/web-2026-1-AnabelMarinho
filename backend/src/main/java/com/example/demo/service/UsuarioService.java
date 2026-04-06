@@ -3,7 +3,6 @@ package com.example.demo.service;
 import com.example.demo.dto.LoginDTO;
 import com.example.demo.dto.RegisterDTO;
 import com.example.demo.dto.UsuarioDTO;
-import com.example.demo.model.TipoUsuario;
 import com.example.demo.model.Usuario;
 import com.example.demo.repository.CursoRepository;
 import com.example.demo.repository.UsuarioRepository;
@@ -34,6 +33,7 @@ public class UsuarioService {
         this.jwtService = jwtService;
     }
 
+    // Converter para DTO
     public UsuarioDTO toDTO(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setId(usuario.getId());
@@ -42,14 +42,24 @@ public class UsuarioService {
         dto.setEmail(usuario.getEmail());
         dto.setTipo(usuario.getTipo());
 
-        if (usuario.getCurso() != null) {
-            dto.setCursoId(usuario.getCurso().getId());
-            dto.setNomeCurso(usuario.getCurso().getNomeCurso());
+        if (usuario.getCursos() != null && !usuario.getCursos().isEmpty()) {
+            dto.setCursosIds(
+                    usuario.getCursos().stream()
+                            .map(c -> c.getId())
+                            .toList()
+            );
+
+            dto.setNomesCursos(
+                    usuario.getCursos().stream()
+                            .map(c -> c.getNomeCurso())
+                            .toList()
+            );
         }
 
         return dto;
     }
 
+    //  Converter de DTO
     public Usuario fromDTO(UsuarioDTO dto) {
         Usuario usuario = new Usuario();
         usuario.setNomeUsuario(dto.getNomeUsuario());
@@ -59,6 +69,7 @@ public class UsuarioService {
         return usuario;
     }
 
+    //  Listar
     public List<UsuarioDTO> listarDTO() {
         return usuarioRepository.findAll()
                 .stream()
@@ -66,6 +77,7 @@ public class UsuarioService {
                 .collect(Collectors.toList());
     }
 
+    // Buscar por ID
     public UsuarioDTO buscarPorIdDTO(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -73,6 +85,7 @@ public class UsuarioService {
         return toDTO(usuario);
     }
 
+    // Atualizar
     public UsuarioDTO atualizarDTO(Long id, UsuarioDTO dto) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -83,28 +96,22 @@ public class UsuarioService {
         usuario.setEmail(dto.getEmail());
         usuario.setTipo(dto.getTipo());
 
-        if (dto.getCursoId() != null && dto.getCursoId() > 0) {
-            usuario.setCurso(
-                    cursoRepository.findById(dto.getCursoId())
-                            .orElseThrow(() -> new ResponseStatusException(
-                                    HttpStatus.BAD_REQUEST, "Curso não encontrado"))
+        //  múltiplos cursos
+        if (dto.getCursosIds() != null) {
+            usuario.setCursos(
+                    dto.getCursosIds().stream()
+                            .map(cursoId -> cursoRepository.findById(cursoId)
+                                    .orElseThrow(() -> new ResponseStatusException(
+                                            HttpStatus.BAD_REQUEST, "Curso não encontrado")))
+                            .collect(Collectors.toList())
             );
-        } else {
-            usuario.setCurso(null);
-        }
-
-        if (usuario.getTipo() == TipoUsuario.DISCENTE && usuario.getCurso() == null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Discente precisa de curso");
-        }
-
-        if (usuario.getTipo() != TipoUsuario.DISCENTE && usuario.getCurso() != null) {
-            throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Apenas discentes podem possuir curso");
         }
 
         Usuario atualizado = usuarioRepository.save(usuario);
         return toDTO(atualizado);
     }
 
+    // Deletar
     public void deletar(Long id) {
         Usuario usuario = usuarioRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(
@@ -112,6 +119,7 @@ public class UsuarioService {
         usuarioRepository.delete(usuario);
     }
 
+    // Registrar
     public Usuario registrar(RegisterDTO dto) {
         if (usuarioRepository.findByEmail(dto.getEmail()) != null) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email já cadastrado");
@@ -124,19 +132,21 @@ public class UsuarioService {
         usuario.setSenha(passwordEncoder.encode(dto.getSenha()));
         usuario.setTipo(dto.getTipo());
 
-        if (dto.getCursoId() != null && dto.getCursoId() > 0) {
-            usuario.setCurso(
-                    cursoRepository.findById(dto.getCursoId())
-                            .orElseThrow(() -> new ResponseStatusException(
-                                    HttpStatus.BAD_REQUEST, "Curso não encontrado"))
+        // múltiplos cursos
+        if (dto.getCursosIds() != null) {
+            usuario.setCursos(
+                    dto.getCursosIds().stream()
+                            .map(cursoId -> cursoRepository.findById(cursoId)
+                                    .orElseThrow(() -> new ResponseStatusException(
+                                            HttpStatus.BAD_REQUEST, "Curso não encontrado")))
+                            .collect(Collectors.toList())
             );
-        } else {
-            usuario.setCurso(null);
         }
 
         return usuarioRepository.save(usuario);
     }
 
+    // Login
     public String login(LoginDTO dto) {
         Usuario usuario = usuarioRepository.findByEmail(dto.getEmail());
 
