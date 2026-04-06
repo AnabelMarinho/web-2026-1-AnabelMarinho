@@ -28,12 +28,6 @@ public class UsuarioController {
         return usuarioService.buscarPorIdDTO(id);
     }
 
-    // Criar usuário
-    @PostMapping
-    public UsuarioDTO salvar(@RequestBody UsuarioDTO dto) {
-        return usuarioService.salvarDTO(dto);
-    }
-
     // Atualizar usuário
     @PutMapping("/{id}")
     public UsuarioDTO atualizar(@PathVariable Long id, @RequestBody UsuarioDTO dto) {
