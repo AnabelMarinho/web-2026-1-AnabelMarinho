@@ -33,4 +33,8 @@ public class Curso {
 
     @ManyToMany(mappedBy = "cursos")
     private List<Usuario> usuarios;
+
+    @Enumerated(EnumType.STRING)
+    private CursoStatus status;
+
 }

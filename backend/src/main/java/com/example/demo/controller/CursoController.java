@@ -1,6 +1,8 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CursoDTO;
+import com.example.demo.model.Usuario;
+import com.example.demo.repository.UsuarioRepository;
 import com.example.demo.service.CursoService;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +14,8 @@ public class CursoController {
 
     private final CursoService cursoService;
 
-    public CursoController(CursoService cursoService) {
+
+    public CursoController(CursoService cursoService,  UsuarioRepository usuarioRepository) {
         this.cursoService = cursoService;
     }
 
@@ -30,19 +33,29 @@ public class CursoController {
 
     // Criar curso
     @PostMapping
-    public CursoDTO salvar(@RequestBody CursoDTO dto) {
-        return cursoService.salvarDTO(dto);
+    public CursoDTO salvar(@RequestParam Long usuarioId,
+                           @RequestBody CursoDTO dto) {
+        return cursoService.criarCurso(usuarioId, dto);
     }
 
     // Atualizar curso
     @PutMapping("/{id}")
-    public CursoDTO atualizar(@PathVariable Long id, @RequestBody CursoDTO dto) {
-        return cursoService.atualizarDTO(id, dto);
+    public CursoDTO atualizar(@PathVariable Long id,
+                              @RequestParam Long usuarioId,
+                              @RequestBody CursoDTO dto) {
+        return cursoService.atualizarCurso(usuarioId, id, dto);
     }
 
     // Deletar curso
     @DeleteMapping("/{id}")
     public void deletar(@PathVariable Long id) {
         cursoService.deletar(id);
+    }
+
+    // sugerir
+    @PostMapping("/sugerir")
+    public CursoDTO sugerir(@RequestParam Long usuarioId,
+                            @RequestBody CursoDTO dto) {
+        return cursoService.sugerirCurso(usuarioId, dto);
     }
 }

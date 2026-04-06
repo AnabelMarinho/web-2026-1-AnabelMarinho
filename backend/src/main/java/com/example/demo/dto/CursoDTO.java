@@ -1,5 +1,6 @@
 package com.example.demo.dto;
 
+import com.example.demo.model.CursoStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;
@@ -16,9 +17,12 @@ public class CursoDTO {
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long id;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private Long instrutorId;
 
     @JsonProperty(access = JsonProperty.Access.READ_ONLY)
     private String nomeInstrutor;
 
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private CursoStatus status;
 }
