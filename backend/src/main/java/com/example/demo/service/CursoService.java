@@ -61,7 +61,7 @@ public class CursoService {
                 .collect(Collectors.toList());
     }
 
-    // Buscar por ID
+    // Buscar curso por ID
     public CursoDTO buscarPorIdDTO(Long id) {
         Curso curso = cursoRepository.findById(id)
                 .orElseThrow(() -> new ResponseStatusException(

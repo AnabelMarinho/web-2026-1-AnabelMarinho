@@ -1,7 +1,6 @@
 package com.example.demo.controller;
 
 import com.example.demo.dto.CursoDTO;
-import com.example.demo.model.Usuario;
 import com.example.demo.repository.UsuarioRepository;
 import com.example.demo.service.CursoService;
 import org.springframework.web.bind.annotation.*;
@@ -52,7 +51,7 @@ public class CursoController {
         cursoService.deletar(id);
     }
 
-    // sugerir
+    // Sugerir curso (Docente)
     @PostMapping("/sugerir")
     public CursoDTO sugerir(@RequestParam Long usuarioId,
                             @RequestBody CursoDTO dto) {

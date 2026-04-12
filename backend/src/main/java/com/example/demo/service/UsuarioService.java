@@ -33,7 +33,7 @@ public class UsuarioService {
         this.jwtService = jwtService;
     }
 
-    // Converter para DTO
+    // Converter usuário para DTO
     public UsuarioDTO toDTO(Usuario usuario) {
         UsuarioDTO dto = new UsuarioDTO();
         dto.setId(usuario.getId());
@@ -59,7 +59,7 @@ public class UsuarioService {
         return dto;
     }
 
-    //  Converter de DTO
+    //  Converter DTO para usuário
     public Usuario fromDTO(UsuarioDTO dto) {
         Usuario usuario = new Usuario();
         usuario.setNomeUsuario(dto.getNomeUsuario());
@@ -94,7 +94,7 @@ public class UsuarioService {
         usuario.setNomeUsuario(dto.getNomeUsuario());
         usuario.setMatricula(dto.getMatricula());
         usuario.setEmail(dto.getEmail());
-        usuario.setTipo(dto.getTipo());
+       // usuario.setTipo(dto.getTipo());
 
         //  múltiplos cursos
         if (dto.getCursosIds() != null) {
@@ -121,7 +121,7 @@ public class UsuarioService {
 
     // Registrar
     public Usuario registrar(RegisterDTO dto) {
-        if (usuarioRepository.findByEmail(dto.getEmail()) != null) {
+        if (usuarioRepository.findByEmail(dto.getEmail()).isPresent()) {
             throw new ResponseStatusException(HttpStatus.BAD_REQUEST, "Email já cadastrado");
         }
 
@@ -148,14 +148,14 @@ public class UsuarioService {
 
     // Login
     public String login(LoginDTO dto) {
-        Usuario usuario = usuarioRepository.findByEmail(dto.getEmail());
 
-        if (usuario == null) {
-            throw new ResponseStatusException(HttpStatus.NOT_FOUND, "Usuário não encontrado");
-        }
+        Usuario usuario = usuarioRepository.findByEmail(dto.getEmail())
+                .orElseThrow(() -> new ResponseStatusException(
+                        HttpStatus.NOT_FOUND, "Usuário não encontrado"));
 
         if (!passwordEncoder.matches(dto.getSenha(), usuario.getSenha())) {
-            throw new ResponseStatusException(HttpStatus.UNAUTHORIZED, "Senha inválida");
+            throw new ResponseStatusException(
+                    HttpStatus.UNAUTHORIZED, "Senha inválida");
         }
 
         return jwtService.gerarToken(usuario.getEmail());

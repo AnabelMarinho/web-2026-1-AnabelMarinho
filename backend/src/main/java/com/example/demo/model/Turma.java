@@ -33,4 +33,12 @@ public class Turma {
 
     @Column(nullable = false, length = 50)
     private String sala;
+
+    @ManyToOne
+    @JoinColumn(name = "curso_id", nullable = false)
+    private Curso curso;
+
+    @ManyToOne
+    @JoinColumn(name = "instrutor_id", nullable = false)
+    private Usuario instrutor;
 }
