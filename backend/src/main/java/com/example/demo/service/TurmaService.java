@@ -1,7 +1,9 @@
 package com.example.demo.service;
 
+import com.example.demo.dto.SalaDTO;
 import com.example.demo.dto.TurmaDTO;
 import com.example.demo.enums.CursoStatus;
+import com.example.demo.enums.DiaSemana;
 import com.example.demo.enums.TipoSala;
 import com.example.demo.model.*;
 import com.example.demo.repository.CursoRepository;
@@ -11,7 +13,6 @@ import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
 import com.example.demo.repository.SalaRepository;
-
 import java.util.List;
 import java.util.stream.Collectors;
 
@@ -22,16 +23,16 @@ public class TurmaService {
     private final CursoRepository cursoRepository;
     private final UsuarioRepository usuarioRepository;
     private final SalaRepository salaRepository;
-    private final SalaService salaService;
+    private final SalaDisponibilidadeService salaDisponibilidadeService;
 
     public TurmaService(TurmaRepository turmaRepository,
                         CursoRepository cursoRepository,
-                        UsuarioRepository usuarioRepository, SalaRepository salaRepository, SalaService salaService) {
+                        UsuarioRepository usuarioRepository, SalaRepository salaRepository, SalaDisponibilidadeService salaDisponibilidadeService) {
         this.turmaRepository = turmaRepository;
         this.cursoRepository = cursoRepository;
         this.usuarioRepository = usuarioRepository;
         this.salaRepository = salaRepository;
-        this.salaService = salaService;
+        this.salaDisponibilidadeService = salaDisponibilidadeService;
     }
 
     // Converter Turma para DTO
@@ -129,16 +130,24 @@ public class TurmaService {
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.NOT_FOUND, "Sala não encontrada"));
 
-            boolean disponivel = salaService.salaDisponivel(
-                    sala.getId(),
-                    dto.getHorarioInicio(),
-                    dto.getHorarioFim()
+            DiaSemana diaSemana = DiaSemana.valueOf(
+                    dto.getDataInicio().getDayOfWeek().name()
             );
+
+            List<SalaDTO> salasDisponiveis =
+                    salaDisponibilidadeService.buscarSalasDisponiveis(
+                            diaSemana,
+                            dto.getHorarioInicio(),
+                            dto.getHorarioFim()
+                    );
+
+            boolean disponivel = salasDisponiveis.stream()
+                    .anyMatch(s -> s.getId().equals(sala.getId()));
 
             if (!disponivel) {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "Sala já está ocupada nesse horário"
+                        "Sala não está disponível nesse horário"
                 );
             }
 
@@ -197,16 +206,25 @@ public class TurmaService {
                     .orElseThrow(() -> new ResponseStatusException(
                             HttpStatus.NOT_FOUND, "Sala não encontrada"));
 
-            boolean disponivel = salaService.salaDisponivel(
-                    sala.getId(),
-                    dto.getHorarioInicio(),
-                    dto.getHorarioFim()
+            // 🔥 VALIDAÇÃO CORRETA DE DISPONIBILIDADE
+            DiaSemana diaSemana = DiaSemana.valueOf(
+                    dto.getDataInicio().getDayOfWeek().name()
             );
+
+            List<SalaDTO> salasDisponiveis =
+                    salaDisponibilidadeService.buscarSalasDisponiveis(
+                            diaSemana,
+                            dto.getHorarioInicio(),
+                            dto.getHorarioFim()
+                    );
+
+            boolean disponivel = salasDisponiveis.stream()
+                    .anyMatch(s -> s.getId().equals(sala.getId()));
 
             if (!disponivel) {
                 throw new ResponseStatusException(
                         HttpStatus.BAD_REQUEST,
-                        "Sala já está ocupada nesse horário"
+                        "Sala não está disponível nesse horário"
                 );
             }
 

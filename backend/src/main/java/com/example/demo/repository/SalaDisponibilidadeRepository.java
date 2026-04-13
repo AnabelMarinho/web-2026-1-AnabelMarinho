@@ -1,11 +1,14 @@
 package com.example.demo.repository;
 
+import com.example.demo.enums.DiaSemana;
 import com.example.demo.model.SalaDisponibilidade;
 import org.springframework.data.jpa.repository.JpaRepository;
 
+import java.util.Arrays;
 import java.util.List;
 
 public interface SalaDisponibilidadeRepository extends JpaRepository<SalaDisponibilidade, Long> {
 
     List<SalaDisponibilidade> findBySalaId(Long salaId);
+    List<SalaDisponibilidade> findBySalaIdAndDiaSemana(Long salaId, DiaSemana diaSemana);
 }
