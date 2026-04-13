@@ -2,8 +2,8 @@ package com.example.demo.service;
 
 import com.example.demo.dto.CursoDTO;
 import com.example.demo.model.Curso;
-import com.example.demo.model.CursoStatus;
-import com.example.demo.model.TipoUsuario;
+import com.example.demo.enums.CursoStatus;
+import com.example.demo.enums.TipoUsuario;
 import com.example.demo.model.Usuario;
 import com.example.demo.repository.CursoRepository;
 import com.example.demo.repository.UsuarioRepository;

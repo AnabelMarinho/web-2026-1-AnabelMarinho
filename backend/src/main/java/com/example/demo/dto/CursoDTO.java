@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import com.example.demo.model.CursoStatus;
+import com.example.demo.enums.CursoStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Getter;
 import lombok.Setter;

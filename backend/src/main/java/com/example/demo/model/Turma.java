@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.example.demo.enums.TipoSala;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -31,8 +32,13 @@ public class Turma {
     @Column(nullable = false)
     private LocalTime horarioFim;
 
-    @Column(nullable = false, length = 50)
-    private String sala;
+    @ManyToOne
+    @JoinColumn(name = "sala_id")
+    private Sala sala;
+
+    @Enumerated(EnumType.STRING)
+    @Column(nullable = false)
+    private TipoSala tipo;
 
     @ManyToOne
     @JoinColumn(name = "curso_id", nullable = false)

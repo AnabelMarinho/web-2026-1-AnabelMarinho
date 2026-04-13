@@ -1,6 +1,8 @@
 package com.example.demo.service;
 
 import com.example.demo.dto.TurmaDTO;
+import com.example.demo.enums.CursoStatus;
+import com.example.demo.enums.TipoSala;
 import com.example.demo.model.*;
 import com.example.demo.repository.CursoRepository;
 import com.example.demo.repository.TurmaRepository;
@@ -8,6 +10,7 @@ import com.example.demo.repository.UsuarioRepository;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 import org.springframework.web.server.ResponseStatusException;
+import com.example.demo.repository.SalaRepository;
 
 import java.util.List;
 import java.util.stream.Collectors;
@@ -18,13 +21,17 @@ public class TurmaService {
     private final TurmaRepository turmaRepository;
     private final CursoRepository cursoRepository;
     private final UsuarioRepository usuarioRepository;
+    private final SalaRepository salaRepository;
+    private final SalaService salaService;
 
     public TurmaService(TurmaRepository turmaRepository,
                         CursoRepository cursoRepository,
-                        UsuarioRepository usuarioRepository) {
+                        UsuarioRepository usuarioRepository, SalaRepository salaRepository, SalaService salaService) {
         this.turmaRepository = turmaRepository;
         this.cursoRepository = cursoRepository;
         this.usuarioRepository = usuarioRepository;
+        this.salaRepository = salaRepository;
+        this.salaService = salaService;
     }
 
     // Converter Turma para DTO
@@ -37,7 +44,7 @@ public class TurmaService {
         dto.setDataFim(turma.getDataFim());
         dto.setHorarioInicio(turma.getHorarioInicio());
         dto.setHorarioFim(turma.getHorarioFim());
-        dto.setSala(turma.getSala());
+        dto.setTipo(turma.getTipo());
 
         dto.setCursoId(turma.getCurso().getId());
         dto.setNomeCurso(turma.getCurso().getNomeCurso());
@@ -45,6 +52,11 @@ public class TurmaService {
         if (turma.getInstrutor() != null) {
             dto.setInstrutorId(turma.getInstrutor().getId());
             dto.setNomeInstrutor(turma.getInstrutor().getNomeUsuario());
+        }
+
+        if (turma.getSala() != null) {
+            dto.setSalaId(turma.getSala().getId());
+            dto.setNomeSala(turma.getSala().getNomeSala());
         }
 
         return dto;
@@ -88,13 +100,53 @@ public class TurmaService {
                     HttpStatus.FORBIDDEN, "Apenas o instrutor do curso pode criar turmas");
         }
 
+        if (dto.getTipo() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Tipo da turma é obrigatório"
+            );
+        }
+
         Turma turma = new Turma();
+
         turma.setNomeTurma(dto.getNomeTurma());
         turma.setDataInicio(dto.getDataInicio());
         turma.setDataFim(dto.getDataFim());
         turma.setHorarioInicio(dto.getHorarioInicio());
         turma.setHorarioFim(dto.getHorarioFim());
-        turma.setSala(dto.getSala());
+        turma.setTipo(dto.getTipo());
+
+        if (dto.getTipo() == TipoSala.PRESENCIAL) {
+
+            if (dto.getSalaId() == null) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Turma presencial precisa de sala"
+                );
+            }
+
+            Sala sala = salaRepository.findById(dto.getSalaId())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "Sala não encontrada"));
+
+            boolean disponivel = salaService.salaDisponivel(
+                    sala.getId(),
+                    dto.getHorarioInicio(),
+                    dto.getHorarioFim()
+            );
+
+            if (!disponivel) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Sala já está ocupada nesse horário"
+                );
+            }
+
+            turma.setSala(sala);
+
+        } else {
+            turma.setSala(null);
+        }
 
         turma.setCurso(curso);
         turma.setInstrutor(usuario);
@@ -118,12 +170,51 @@ public class TurmaService {
                     HttpStatus.FORBIDDEN, "Apenas o instrutor pode atualizar a turma");
         }
 
+        if (dto.getTipo() == null) {
+            throw new ResponseStatusException(
+                    HttpStatus.BAD_REQUEST,
+                    "Tipo da turma é obrigatório"
+            );
+        }
+
         turma.setNomeTurma(dto.getNomeTurma());
         turma.setDataInicio(dto.getDataInicio());
         turma.setDataFim(dto.getDataFim());
         turma.setHorarioInicio(dto.getHorarioInicio());
         turma.setHorarioFim(dto.getHorarioFim());
-        turma.setSala(dto.getSala());
+        turma.setTipo(dto.getTipo());
+
+        if (dto.getTipo() == TipoSala.PRESENCIAL) {
+
+            if (dto.getSalaId() == null) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Turma presencial precisa de sala"
+                );
+            }
+
+            Sala sala = salaRepository.findById(dto.getSalaId())
+                    .orElseThrow(() -> new ResponseStatusException(
+                            HttpStatus.NOT_FOUND, "Sala não encontrada"));
+
+            boolean disponivel = salaService.salaDisponivel(
+                    sala.getId(),
+                    dto.getHorarioInicio(),
+                    dto.getHorarioFim()
+            );
+
+            if (!disponivel) {
+                throw new ResponseStatusException(
+                        HttpStatus.BAD_REQUEST,
+                        "Sala já está ocupada nesse horário"
+                );
+            }
+
+            turma.setSala(sala);
+
+        } else {
+            turma.setSala(null);
+        }
 
         return toDTO(turmaRepository.save(turma));
     }

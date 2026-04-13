@@ -1,5 +1,5 @@
 package com.example.demo.dto;
-import com.example.demo.model.TipoUsuario;
+import com.example.demo.enums.TipoUsuario;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import lombok.Data;
 

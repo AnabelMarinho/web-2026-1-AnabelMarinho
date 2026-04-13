@@ -1,5 +1,8 @@
 package com.example.demo.service;
 
+import com.example.demo.enums.CursoStatus;
+import com.example.demo.enums.SolicitarStatus;
+import com.example.demo.enums.TipoUsuario;
 import com.example.demo.model.*;
 import com.example.demo.repository.CursoRepository;
 import com.example.demo.repository.UsuarioRepository;
