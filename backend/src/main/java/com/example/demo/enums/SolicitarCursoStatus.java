@@ -1,6 +1,6 @@
 package com.example.demo.enums;
 
-public enum SolicitarStatus {
+public enum SolicitarCursoStatus {
     PENDENTE,
     ACEITA,
     RECUSADA

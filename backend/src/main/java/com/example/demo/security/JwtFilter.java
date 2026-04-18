@@ -31,7 +31,7 @@ public class JwtFilter extends OncePerRequestFilter {
 
         String path = request.getRequestURI();
 
-        if (path.contains("/auth")) {
+        if (path.startsWith("/auth")) {
             filterChain.doFilter(request, response);
             return;
         }
@@ -42,8 +42,10 @@ public class JwtFilter extends OncePerRequestFilter {
 
             String token = authHeader.substring(7);
 
-            if (jwtService.validarToken(token)) {
+            System.out.println("TOKEN RECEBIDO = " + token);
+            System.out.println("VALIDO? = " + jwtService.validarToken(token));
 
+            if (jwtService.validarToken(token)) {
                 String email = jwtService.extrairEmail(token);
 
                 UsernamePasswordAuthenticationToken authentication =

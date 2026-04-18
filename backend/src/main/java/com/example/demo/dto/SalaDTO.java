@@ -1,6 +1,6 @@
 package com.example.demo.dto;
 
-import com.example.demo.enums.TipoSala;
+import com.example.demo.enums.SalaStatus;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import io.swagger.v3.oas.annotations.media.Schema;
 import lombok.Data;
@@ -16,4 +16,7 @@ public class SalaDTO {
 
     @Schema(example = "30")
     private Integer capacidade;
+
+    @JsonProperty(access = JsonProperty.Access.READ_ONLY)
+    private SalaStatus status;
 }

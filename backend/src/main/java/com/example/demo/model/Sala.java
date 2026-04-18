@@ -1,5 +1,6 @@
 package com.example.demo.model;
 
+import com.example.demo.enums.SolicitarSalaStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -22,4 +23,7 @@ public class Sala {
 
     @OneToMany(mappedBy = "sala")
     private List<Turma> turmas;
+
+    @Enumerated(EnumType.STRING)
+    private SolicitarSalaStatus status;
 }

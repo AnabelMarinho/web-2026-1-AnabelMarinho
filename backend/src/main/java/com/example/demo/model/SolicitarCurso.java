@@ -1,6 +1,6 @@
 package com.example.demo.model;
 
-import com.example.demo.enums.SolicitarStatus;
+import com.example.demo.enums.SolicitarCursoStatus;
 import jakarta.persistence.*;
 import lombok.Getter;
 import lombok.Setter;
@@ -20,5 +20,5 @@ public class SolicitarCurso {
     private Curso curso;
 
     @Enumerated(EnumType.STRING)
-    private SolicitarStatus status;
+    private SolicitarCursoStatus status;
 }

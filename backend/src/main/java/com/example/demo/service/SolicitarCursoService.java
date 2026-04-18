@@ -1,7 +1,7 @@
 package com.example.demo.service;
 
 import com.example.demo.enums.CursoStatus;
-import com.example.demo.enums.SolicitarStatus;
+import com.example.demo.enums.SolicitarCursoStatus;
 import com.example.demo.enums.TipoUsuario;
 import com.example.demo.model.*;
 import com.example.demo.repository.CursoRepository;
@@ -54,7 +54,7 @@ public class SolicitarCursoService {
         SolicitarCurso solicitacao = new SolicitarCurso();
         solicitacao.setDiscente(usuario);
         solicitacao.setCurso(curso);
-        solicitacao.setStatus(SolicitarStatus.PENDENTE);
+        solicitacao.setStatus(SolicitarCursoStatus.PENDENTE);
 
         solicitacaoRepository.save(solicitacao);
     }
@@ -74,7 +74,7 @@ public class SolicitarCursoService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Solicitação não encontrada"));
 
-        if (solicitacao.getStatus() != SolicitarStatus.PENDENTE) {
+        if (solicitacao.getStatus() != SolicitarCursoStatus.PENDENTE) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Solicitação já foi processada");
         }
@@ -91,7 +91,7 @@ public class SolicitarCursoService {
         curso.setStatus(CursoStatus.ATIVO);
 
         // atualiza solicitação
-        solicitacao.setStatus(SolicitarStatus.ACEITA);
+        solicitacao.setStatus(SolicitarCursoStatus.ACEITA);
 
         cursoRepository.save(curso);
         solicitacaoRepository.save(solicitacao);
@@ -112,12 +112,12 @@ public class SolicitarCursoService {
                 .orElseThrow(() -> new ResponseStatusException(
                         HttpStatus.NOT_FOUND, "Solicitação não encontrada"));
 
-        if (solicitacao.getStatus() != SolicitarStatus.PENDENTE) {
+        if (solicitacao.getStatus() != SolicitarCursoStatus.PENDENTE) {
             throw new ResponseStatusException(
                     HttpStatus.BAD_REQUEST, "Solicitação já foi processada");
         }
 
-        solicitacao.setStatus(SolicitarStatus.RECUSADA);
+        solicitacao.setStatus(SolicitarCursoStatus.RECUSADA);
 
         solicitacaoRepository.save(solicitacao);
     }
